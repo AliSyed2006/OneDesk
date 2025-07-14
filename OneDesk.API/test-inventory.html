@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head><title>Inventory playground</title></head>
+<body>
+  <h2>Add item</h2>
+  <form id="addForm">
+    <input id="name"  placeholder="Name"  required>
+    <input id="sku"   placeholder="SKU"   required>
+    <input id="desc"  placeholder="Description">
+    <input id="cat"   placeholder="Category" required>
+    <input id="sup"   placeholder="Supplier">
+    <input id="qty"   type="number" placeholder="Stock"   required>
+    <input id="cost"  type="number" placeholder="Cost"    required>
+    <input id="sell"  type="number" placeholder="Selling" required>
+    <button>Add</button>
+  </form>
+
+  <h2>Quick actions</h2>
+  <button id="getAllBtn">Get all items</button>
+  <input id="delId" type="number" placeholder="ID to delete">
+  <button id="delBtn">Delete ID</button>
+
+  <pre id="output"></pre>
+
+<script>
+const api = 'http://localhost:5062/api/Inventory';
+const out = document.getElementById('output');
+
+document.getElementById('addForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const item = {
+    name:  val('name'),   sku:  val('sku'),
+    description: val('desc'),  category: val('cat'),
+    supplier: val('sup'),
+    quantityInStock: +val('qty'),
+    costPrice: +val('cost'),
+    sellingPrice: +val('sell'),
+    createdAt: new Date().toISOString()
+  };
+  await call(api, 'POST', item);
+});
+
+document.getElementById('getAllBtn').onclick = () => call(api, 'GET');
+
+document.getElementById('delBtn').onclick = () => {
+  const id = document.getElementById('delId').value;
+  if (id) call(`${api}/${id}`, 'DELETE');
+};
+
+async function call(url, method, body){
+  try{
+    const res = await fetch(url,{
+      method, headers:{'Content-Type':'application/json'},
+      body: body? JSON.stringify(body) : null
+    });
+    const txt = res.status + ' ' + res.statusText +
+                '\n' + (await res.text());
+    out.textContent = txt || '[no content]';
+  }catch(err){ out.textContent = err; }
+}
+
+function val(id){ return document.getElementById(id).value.trim(); }
+</script>
+</body>
+</html>
