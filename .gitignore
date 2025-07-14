@@ -1,0 +1,14 @@
+# Ignore build output
+OneDeskAPI/bin/
+OneDeskAPI/obj/
+
+# Ignore user-specific files
+*.user
+*.suo
+*.cache
+*.log
+.vscode/
+.env
+
+# Ollama local models (if any)
+ollama/models/
